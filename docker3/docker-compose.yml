@@ -1,0 +1,42 @@
+version: '3'
+services:
+  scrum-app:
+    container_name: back-cont 
+    image: scrum-board-master_backend
+    
+    ports:
+      - "8080:8080"
+    build: ./scrum-app
+    environment:
+      - DB_SERVER=postgres  
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=Raslen
+      - POSTGRES_PASSWORD=Raslen
+    links:
+      - postgres  
+
+    
+
+  scrum-ui:
+    container_name: front-cont
+    image: scrum-board-master_frontend
+    ports:
+      - "4200:80"
+    build: ./scrum-ui
+    links:
+      - scrum-app  
+
+  postgres: 
+    container_name: postgres-cont
+    ports:
+      - "5432:5432" 
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=Raslen
+      - POSTGRES_PASSWORD=Raslen
+    image: "postgres:9.6-alpine"
+    volumes:
+      - scrum-data:/var/lib/postgresql/data
+
+volumes:
+  scrum-data:
