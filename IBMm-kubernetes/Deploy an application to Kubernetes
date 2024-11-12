@@ -1,0 +1,98 @@
+This lab is broken up into the following tasks:
+
+Create-a-free-kubernetes-cluster
+Launch-the-ibm-cloud-shell
+Connect-to-your-cluster
+Deploy-the-application
+Access-the-web-app
+Test-it-out
+Clean-up
+
+
+
+
+Click on the clipboard to copy the command, the one using the //ibmcloud ks cluster config command.// This will set any kubectl commands to use your newly created cluster.
+
+Once loaded, you’ll be presented with an embedded web terminal that has the ibmcloud and kubectl CLIs available
+
+
+3. Connect to your cluster
+From the IBM Cloud Shell, run the command that you command, replacing your cluster ID in the command below.
+
+1
+ibmcloud ks cluster config --cluster <YOUR_CLUSTER_ID>
+Copied!Executed!
+You should see output like the example below:
+
+1
+2
+3
+4
+5
+6
+$ ibmcloud ks cluster config --cluster br81hufw0csdd57q7gug
+The configuration for br81hufw0csdd57q7gug was downloaded successfully.
+Added context for br81hufw0csdd57q7gug to the current kubeconfig file.
+You can now execute 'kubectl' commands against your cluster. For example, run 'kubectl get nodes'.
+Copied!Executed!
+4. Deploy the application
+In this lab we’ll run a sample application that detects objects in a picture. Deploy the application by running the command below.
+
+1
+kubectl apply -f https://raw.githubusercontent.com/IBM/MAX-Object-Detector/master/max-object-detector.yaml
+Copied!Executed!
+You should see output like the example below:
+
+1
+2
+3
+4
+$ kubectl apply -f https://raw.githubusercontent.com/IBM/MAX-Object-Detector/master/max-object-detector.yaml
+service/max-object-detector created
+deployment.apps/max-object-detector created
+Copied!Executed!
+5. Access the web app
+After a few minutes, the application should be available. To access it we need to find the public IP address of the cluster, and the port the application is running on.
+
+To find the public IP address of the cluster run the command below:
+
+1
+ibmcloud cs workers --cluster <YOUR_CLUSTER_ID>
+Copied!Executed!
+You should see output like the example below:
+
+1
+2
+3
+$ ibmcloud cs workers --cluster br81hufw0csdd57q7gug
+ID                                                       Public IP        Private IP     Flavor               State    Status   Zone    Version
+kube-br81hufw0csdd57q7gug-stevemark8s-default-000001ab   169.55.160.163   10.167.24.59   b3c.4x16.encrypted   normal   Ready    tor01   1.18.3_1514
+Copied!Executed!
+The public IP address for this cluster is 169.55.160.163.
+
+And to find the port the application is running on, run the following command:
+
+1
+kubectl describe service max-object-detector | grep NodePort
+Copied!Executed!
+You should see output like the example below:
+
+1
+2
+3
+$ kubectl describe service max-object-detector | grep NodePort
+Type:                     NodePort
+NodePort:                 <unset>  30071/TCP
+Copied!Executed!
+The port for this application is 30071.
+
+6. Test it out
+From your browser navigate to the URL
+
+1
+http://<public-ip-address:<port>/app
+Copied!
+In the example above, it looked like:
+
+1
+http://169.55.160.163:30071/app
